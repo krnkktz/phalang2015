@@ -10,6 +10,17 @@ let load_file f =
   (s) ;;
 
 if Array.length Sys.argv > 1 then
+  let lex = List.rev @@ Lex.l @@ load_file Sys.argv.(1) in
+  let () = print_string "lex: ok" in
+  let () = print_newline () in
+  let syn = Syn.syn lex in
+  let () = print_string "syn: ok" in
+  let () = print_newline () in
+  let () = print_string "stat: " in
+  let () = Iden.check syn in
+  let () = print_string "ok" in
+  let () = print_newline () in
+  let () = print_string "eval: " in
   (print_string @@ Syn.show @@ Eval.eval Builtin.builtin @@ Syn.syn
     @@ List.rev @@ Lex.l @@ load_file Sys.argv.(1) ;
   print_string "\n")

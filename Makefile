@@ -1,7 +1,7 @@
 # Makefile
 
 all:
-	ocamlc lex.ml syn.ml eval.ml builtin.ml top.ml file.ml
+	ocamlc lex.ml syn.ml builtin.ml iden.ml eval.ml top.ml file.ml
 
 clean:
 	@rm -fv *.cmi *.cmo
