@@ -40,6 +40,7 @@ let syn t =
     | Lex.Int x :: xs -> Int x, xs
     | Lex.Bool x :: xs -> Bool x, xs
     | Lex.Id x :: xs -> Var x, xs
+    | Lex.Operator Lex.Not :: xs -> Var "not", xs
     | Lex.Leftpar :: xs -> let ex, xxs = expr xs in (match xxs with
       | Lex.Rightpar :: xxxs -> ex, xxxs
       | _ -> raise @@ Error "missing right parenthesis")
@@ -55,44 +56,47 @@ let syn t =
       | e, [] -> e, []
       | e, xs1 -> h e xs1 and
 
-  s_times xs = match s_fun xs with
-    | e, Lex.Operator Lex.Times :: xs -> let e1, xs1 = s_times xs in
-      Application (Application (Var "*", e), e1), xs1
-    | e, Lex.Operator Lex.Division :: xs -> let e1, xs1 = s_times xs in
-      Application (Application (Var "/", e), e1), xs1
-    | e, Lex.Operator Lex.Modulo :: xs -> let e1, xs1 = s_times xs in
-      Application (Application (Var "%", e), e1), xs1
-    | e, xs -> e, xs and
+  s_times xs =
+    let rec h = function
+      | e, Lex.Operator Lex.Times :: xs -> let e1, xs1 = s_times xs in
+        Application (Application (Var "*", e), e1), xs1
+      | e, Lex.Operator Lex.Division :: xs -> let e1, xs1 = s_times xs in
+        Application (Application (Var "/", e), e1), xs1
+      | e, Lex.Operator Lex.Modulo :: xs -> let e1, xs1 = s_times xs in
+        Application (Application (Var "%", e), e1), xs1
+      | e, xs -> e, xs in
+    h @@ s_fun xs and
 
-  s_plus xs = match s_times xs with
-    | e, Lex.Operator Lex.Plus :: xs -> let e1, xs1 = s_plus xs in
-      Application (Application (Var "+", e), e1), xs1
-    | e, Lex.Operator Lex.Minus :: xs -> let e1, xs1 = s_plus xs in
-      Application (Application (Var "-", e), e1), xs1
-    | e, xs -> e, xs and
+  s_plus xs =
+    let rec h = function
+      | e, Lex.Operator Lex.Plus :: xs -> let e1, xs1 = s_times xs in
+        h (Application (Application (Var "+", e), e1), xs1)
+      | e, Lex.Operator Lex.Minus :: xs -> let e1, xs1 = s_times xs in
+        h (Application (Application (Var "-", e), e1), xs1)
+      | e, xs -> e, xs in
+    h @@ s_times xs and
 
-  s_comp xs = match s_plus xs with
-    | e, Lex.Operator Lex.Equal :: xs -> let e1, xs1 = s_comp xs in
-      Application (Application (Var "==", e), e1), xs1
-    | e, Lex.Operator Lex.Greater :: xs -> let e1, xs1 = s_comp xs in
-      Application (Application (Var ">", e), e1), xs1
-    | e, Lex.Operator Lex.Lesser :: xs -> let e1, xs1 = s_comp xs in
-      Application (Application (Var "<", e), e1), xs1
-    | e, Lex.Operator Lex.Greaterorequal :: xs -> let e1, xs1 = s_comp xs in
-      Application (Application (Var ">=", e), e1), xs1
-    | e, Lex.Operator Lex.Lesserorequal :: xs -> let e1, xs1 = s_comp xs in
-      Application (Application (Var "<=", e), e1), xs1
-    | e, xs -> e, xs and
+  s_comp xs =
+    let rec h = function
+      | e, Lex.Operator Lex.Equal :: xs -> let e1, xs1 = s_comp xs in
+        Application (Application (Var "==", e), e1), xs1
+      | e, Lex.Operator Lex.Greater :: xs -> let e1, xs1 = s_comp xs in
+        Application (Application (Var ">", e), e1), xs1
+      | e, Lex.Operator Lex.Lesser :: xs -> let e1, xs1 = s_comp xs in
+        Application (Application (Var "<", e), e1), xs1
+      | e, Lex.Operator Lex.Greaterorequal :: xs -> let e1, xs1 = s_comp xs in
+        Application (Application (Var ">=", e), e1), xs1
+      | e, Lex.Operator Lex.Lesserorequal :: xs -> let e1, xs1 = s_comp xs in
+        Application (Application (Var "<=", e), e1), xs1
+      | e, xs -> e, xs in
+    h @@ s_plus xs and
 
-  s_bool xs = match xs with
-    | Lex.Operator Lex.Not :: xs -> let e, xs1 = s_bool xs in
-      Application (Var "not", e), xs1
-    | xs -> (match s_comp xs with
-      | e, Lex.Operator Lex.And :: xs1 -> let e1, xs2 = s_bool xs in
-        Application (Application (Var "and", e), e1), xs2
-      | e, Lex.Operator Lex.Or :: xs1 -> let e1, xs2 = s_bool xs in
-        Application (Application (Var "or", e), e1), xs2
-      | e, xs -> e, xs) and
+  s_bool xs = match s_comp xs with
+    | e, Lex.Operator Lex.And :: xs1 -> let e1, xs2 = s_bool xs in
+      Application (Application (Var "and", e), e1), xs2
+    | e, Lex.Operator Lex.Or :: xs1 -> let e1, xs2 = s_bool xs in
+      Application (Application (Var "or", e), e1), xs2
+    | e, xs -> e, xs and
 
   expr xs = s_bool xs in
 
