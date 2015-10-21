@@ -7,12 +7,20 @@ let rec get_var s = function
   | _ :: xs -> get_var s xs
   | [] -> raise @@ Error ("unknown variable " ^ s)
 
+let rec show_namespace = function
+  | [] ->  ""
+  | (n, v) :: xs -> "var " ^ n ^ ": " ^ Syn.show v ^ "\n" ^ show_namespace xs
+
 let rec eval names = function
   | Syn.Application (exp1, exp2) -> (match eval names exp1 with
     | Syn.Fun (_, Syn.Builtin f) -> f @@ eval names exp2
-    | Syn.Fun (n, f) -> eval ((n, eval names exp2) :: names) f
+    | Syn.Fun (n, f) -> let v = eval names exp2 in
+      (match eval ((n, v) :: names) f with
+        | Syn.Fun (n1, f1) -> Syn.Fun (n1, Syn.Let (n, v, f1))
+        | e -> e)
     | _ -> raise @@ Error "can't apply that!")
-  | Syn.Var s -> get_var s names
+  | Syn.Var s ->
+        get_var s names
   | Syn.Cond (c, i, e) -> (match eval names c with
     | Syn.Bool true -> eval names i
     | Syn.Bool false -> eval names e

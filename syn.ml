@@ -20,10 +20,14 @@ let rec show = function
   | Int n -> "Int " ^ string_of_int n
   | Bool true -> "Bool true"
   | Bool false -> "Bool false"
-  | Fun _ -> "Fun"
+  | Fun (n, x) -> "Fun " ^ n ^ " -> " ^ show x
   | Builtin _ -> "Builtin"
 
 let syn t =
+
+  let rec gen_f args exp = match args with
+    | [] -> exp
+    | x :: xs -> Fun (x, gen_f xs exp) in
 
   let rec subexpr = function
     | Lex.If :: xs -> let ex1, xs1 = expr xs in (match xs1 with
@@ -33,11 +37,17 @@ let syn t =
             Cond (ex1, ex2, ex3), xs5
           | _ -> raise @@ Error "expected else")
         | _ -> raise @@ Error "expected then")
-    | Lex.Let :: Lex.Id name :: Lex.Assign :: xs ->
-      let exp, xs1 = expr xs in (match xs1 with
-        | Lex.In :: xs2 -> let exp1, xs3 = expr xs2 in
-          Let (name, exp, exp1), xs3
-        | _ -> raise @@ Error "expected in")
+    | Lex.Let :: Lex.Id name :: xs ->
+      let rec h acc = function
+        | Lex.Id name :: xs -> h (name :: acc) xs
+        | xs -> acc, xs in
+      (match h [] xs with
+        | args, Lex.Assign :: xs ->
+          let exp, xs1 = expr xs in (match xs1 with
+            | Lex.In :: xs2 -> let exp1, xs3 = expr xs2 in
+              Let (name, gen_f (List.rev args) exp, exp1), xs3
+            | _ -> raise @@ Error "weird let, expected in")
+        | _ -> raise @@ Error "weird let, expected =")
     | Lex.Let :: _ -> raise @@ Error "weird let"
     | Lex.Fun :: Lex.Id name :: Lex.To :: xs ->
       let exp, xs1 = expr xs in

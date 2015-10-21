@@ -32,6 +32,7 @@ type t =
   | Else
   | Fun
   | To
+  | Rec
 
 let rec show = function
   | [] -> ""
@@ -50,6 +51,7 @@ let rec show = function
     | Then -> "then"
     | Else -> "else"
     | Fun -> "fun"
+    | Rec -> "rec"
     | To -> "to") ^ " " ^ show xs
 
 
@@ -122,6 +124,7 @@ let l s =
       | "then" -> tr (Then :: acc)
       | "else" -> tr (Else :: acc)
       | "fun" -> tr (Fun :: acc)
+      | "rec" -> tr (Rec :: acc)
       | n -> tr (Id n :: acc)) pos and
 
   tr_num acc cn pos =
