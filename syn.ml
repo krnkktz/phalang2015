@@ -25,9 +25,13 @@ let rec show = function
 
 let syn t =
 
-  let rec gen_f args exp = match args with
+  let rec gen_f r args exp = match args with
     | [] -> exp
-    | x :: xs -> Fun (x, gen_f xs exp) in
+    | x :: xs -> Fun (x, gen_f r xs exp) in
+
+  let rec args_h acc = function
+    | Lex.Id name :: xs -> args_h (name :: acc) xs
+    | xs -> acc, xs in
 
   let rec subexpr = function
     | Lex.If :: xs -> let ex1, xs1 = expr xs in (match xs1 with
@@ -38,16 +42,9 @@ let syn t =
           | _ -> raise @@ Error "expected else")
         | _ -> raise @@ Error "expected then")
     | Lex.Let :: Lex.Id name :: xs ->
-      let rec h acc = function
-        | Lex.Id name :: xs -> h (name :: acc) xs
-        | xs -> acc, xs in
-      (match h [] xs with
-        | args, Lex.Assign :: xs ->
-          let exp, xs1 = expr xs in (match xs1 with
-            | Lex.In :: xs2 -> let exp1, xs3 = expr xs2 in
-              Let (name, gen_f (List.rev args) exp, exp1), xs3
-            | _ -> raise @@ Error "weird let, expected in")
-        | _ -> raise @@ Error "weird let, expected =")
+      f_let name false xs
+    | Lex.Let :: Lex.Rec :: Lex.Id name :: xs ->
+      f_let name true xs
     | Lex.Let :: _ -> raise @@ Error "weird let"
     | Lex.Fun :: Lex.Id name :: Lex.To :: xs ->
       let exp, xs1 = expr xs in
@@ -61,6 +58,15 @@ let syn t =
       | Lex.Rightpar :: xxxs -> ex, xxxs
       | _ -> raise @@ Error "missing right parenthesis")
     | xs -> raise @@ Error "expected a subexpr" and
+
+  f_let name r xs =
+    match args_h [] xs with
+      | args, Lex.Assign :: xs ->
+        let exp, xs1 = expr xs in (match xs1 with
+          | Lex.In :: xs2 -> let exp1, xs3 = expr xs2 in
+            Let (name, gen_f r (List.rev args) exp, exp1), xs3
+          | _ -> raise @@ Error "weird let, expected in")
+      | _ -> raise @@ Error "weird let, expected =" and
 
   s_fun xs =
     let rec h a xs = try (match subexpr xs with

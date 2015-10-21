@@ -136,12 +136,12 @@ let l s =
 
   tr_comm acc nb is pos =
     if pos >= len then acc else
-      (if s.[pos] = '>' && nb = 1 && not is then tr (To :: acc) else
-        if s.[pos] = '-' then
-          if is && nb > 0 then tr acc else tr_comm acc 1 true
+    if s.[pos] = '>' && nb = 1 && not is then tr (To :: acc) @@ succ pos else
+      if s.[pos] = '-' then
+        (if is && nb > 0 then tr acc else tr_comm acc 1 true) @@ succ pos
       else
-        if is then tr_comm acc 0 true else tr (Operator Minus :: acc))
-    @@ succ pos in
+        if is then tr_comm acc 0 true @@ succ pos
+        else tr (Operator Minus :: acc) pos in
 
   tr [] 0 ;;
 
