@@ -1,17 +1,19 @@
 (* top.ml *)
 
 let rec f () = (try (
-  print_string "phalang15> " ;
+  let () = print_string "phalang15> " in
   let a = read_line () in
-  print_string "lex: ";
+  let () = print_string "lex: " in
   let lex = List.rev @@ Lex.l a in
-  print_string @@ Lex.show lex ; print_string "\n" ;
-  print_string "syn: " ;
+  let () = print_string @@ Lex.show lex in
+  let () = print_string "\n"  in
+  let () = print_string "syn: "  in
   let syn = Syn.syn lex in
-  print_string @@ Syn.show syn ; print_string "\n" ;
-  print_string "eval: " ;
-  print_string @@ Show.show @@ Eval.eval Eval.builtin syn ;
-  print_string "\n" ;
+  let () = print_string @@ Syn.show syn in
+  let () = print_string "\n" in
+  let () = print_string "eval: " in
+  let () = print_string @@ Show.show @@ Eval.eval Eval.builtin syn in
+  let () = print_string "\n" in ()
   ) with
   | Eval.Error x | Syn.Error x | Lex.Error x ->
       print_string ("error: " ^ x ^ "\n")) ;

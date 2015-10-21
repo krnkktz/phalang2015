@@ -16,6 +16,7 @@ type operator =
   | Not
   | And
   | Or
+  | Cons
 
 type t =
   | Id of string
@@ -33,6 +34,7 @@ type t =
   | Fun
   | To
   | Rec
+  | Nil
 
 let rec show = function
   | [] -> ""
@@ -48,6 +50,7 @@ let rec show = function
     | Assign -> "="
     | In -> "in"
     | If -> "if"
+    | Nil -> "nil"
     | Then -> "then"
     | Else -> "else"
     | Fun -> "fun"
@@ -83,6 +86,7 @@ let l s =
       | '%' -> tr (Operator Modulo :: acc)
       | '(' -> tr (Leftpar :: acc)
       | ')' -> tr (Rightpar :: acc)
+      | ':' -> tr (Operator Cons :: acc)
       | '=' -> tr_eq acc
       | '>' -> tr_gr acc
       | '<' -> tr_lr acc

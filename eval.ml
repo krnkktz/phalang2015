@@ -11,7 +11,8 @@ let rec show_namespace = function
   | [] ->  ""
   | (n, v) :: xs -> "var " ^ n ^ ": " ^ Syn.show v ^ "\n" ^ show_namespace xs
 
-let rec eval names = function
+let rec eval names =
+  function
   | Syn.Application (exp1, exp2) -> (match eval names exp1 with
     | Syn.Fun (_, Syn.Builtin f) -> f @@ eval names exp2
     | Syn.Fun (n, f) -> let v = eval names exp2 in
@@ -30,6 +31,7 @@ let rec eval names = function
   | Syn.Bool b -> Syn.Bool b
   | Syn.Fun (n, e) -> Syn.Fun (n, e)
   | Syn.Builtin f -> Syn.Builtin f
+  | Syn.List x -> Syn.List x
 
 let builtin =
   let i_ = function | Syn.Int x -> x | _ -> raise @@ Error "not an int" in
@@ -57,5 +59,21 @@ let builtin =
     "<=", c ( <= );
     "and", b ( && );
     "or", b ( || );
+    "head", Syn.Fun ("x", Syn.Builtin
+      (fun x -> match x with
+        | Syn.List Syn.Nil -> raise @@ Error "empty list"
+        | Syn.List Syn.Li (x, _) -> x
+        | _ -> raise @@ Error "not a list"));
+    "tail", Syn.Fun ("x", Syn.Builtin
+      (fun x -> match x with
+        | Syn.List Syn.Nil -> raise @@ Error "empty list"
+        | Syn.List Syn.Li (_, xs) -> Syn.List xs
+        | _ -> raise @@ Error "not a list"));
+    "nil", Syn.List Syn.Nil;
+    ":", Syn.Fun ("x", Syn.Builtin
+      (fun x -> Syn.Fun ("y", Syn.Builtin
+        (fun y -> match y with
+          | Syn.List z -> Syn.List (Syn.Li (x, z))
+          | _ -> raise @@ Error "not a list"))));
     "not", Syn.Fun ("x", Syn.Builtin (fun x -> Syn.Bool (not @@ b_ x)))]
 

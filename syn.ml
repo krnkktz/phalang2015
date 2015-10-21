@@ -11,17 +11,24 @@ type t =
   | Bool of bool
   | Fun of string * t
   | Builtin of (t -> t)
+  | List of li
+
+and li =
+  | Nil
+  | Li of t * li
 
 let rec show = function
-  | Application (t1, t2) -> "Application (" ^ show t1 ^ ", " ^ show t2 ^ ")"
-  | Var s -> "Var " ^ s
-  | Cond (c, i, e) -> "Cond (" ^ show c ^ ", " ^ show i ^ ", " ^ show e ^ ")"
-  | Let (n, v, c) -> "Let (" ^ n ^ ", " ^ show v ^ ", " ^ show c ^ ")"
-  | Int n -> "Int " ^ string_of_int n
-  | Bool true -> "Bool true"
-  | Bool false -> "Bool false"
-  | Fun (n, x) -> "Fun " ^ n ^ " -> " ^ show x
-  | Builtin _ -> "Builtin"
+  | Application (t1, t2) -> "application (" ^ show t1 ^ ", " ^ show t2 ^ ")"
+  | Var s -> "var " ^ s
+  | Cond (c, i, e) -> "cond (" ^ show c ^ ", " ^ show i ^ ", " ^ show e ^ ")"
+  | Let (n, v, c) -> "let (" ^ n ^ ", " ^ show v ^ ", " ^ show c ^ ")"
+  | Int n -> "int " ^ string_of_int n
+  | Bool true -> "bool true"
+  | Bool false -> "bool false"
+  | Fun (n, x) -> "fun " ^ n ^ " -> " ^ show x
+  | Builtin _ -> "builtin"
+  | List Nil -> "nil"
+  | List Li (x, xs) -> show x ^ " : " ^ show @@ List xs
 
 let syn t =
 
@@ -98,6 +105,11 @@ let syn t =
       | e, xs -> e, xs in
     h @@ s_times xs and
 
+  s_cons xs = match s_plus xs with
+    | e, Lex.Operator Lex.Cons :: xs -> let e1, xs2 = s_cons xs in
+      Application (Application (Var ":", e), e1), xs2
+    | e, xs -> e, xs and
+
   s_comp xs =
     let rec h = function
       | e, Lex.Operator Lex.Equal :: xs -> let e1, xs1 = s_comp xs in
@@ -111,7 +123,7 @@ let syn t =
       | e, Lex.Operator Lex.Lesserorequal :: xs -> let e1, xs1 = s_comp xs in
         Application (Application (Var "<=", e), e1), xs1
       | e, xs -> e, xs in
-    h @@ s_plus xs and
+    h @@ s_cons xs and
 
   s_bool xs = match s_comp xs with
     | e, Lex.Operator Lex.And :: xs1 -> let e1, xs2 = s_bool xs in
