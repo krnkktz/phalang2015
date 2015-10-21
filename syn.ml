@@ -60,16 +60,16 @@ let syn t =
     | Lex.Leftpar :: xs -> let ex, xxs = tr_super xs in (match xxs with
       | Lex.Rightpar :: xxxs -> ex, xxxs
       | _ -> raise @@ Error "missing right parenthesis")
-    | xs -> raise @@ Error "wat??" and
+    | xs -> raise @@ Error "expected an expr" and
 
   tr_super xs = let exp, xs1 = tr xs in match xs1 with
     | [] -> exp, []
-    | Lex.Operator o :: [] ->
-        Application (Var (var_of_op o), exp), []
-    | Lex.Operator o :: xs1 -> let exp1, xs2 = tr_super xs1 in
-        Application (Application (Var (var_of_op o), exp), exp1), xs2
+    | Lex.Operator o :: xs1 -> (try let exp1, xs2 = tr xs1 in
+        Application (Application (Var (var_of_op o), exp), exp1), xs2 with
+        | Error "expected an expr" ->
+            Application (Var (var_of_op o), exp), xs1)
     | xs2 -> try (let exp1, xs3 = tr xs2 in Application (exp, exp1), xs3) with
-      | Error "wat??" -> exp, xs2 in
+      | Error "expected an expr" -> exp, xs2 in
 
   match tr_super t with
     | e, [] -> e
