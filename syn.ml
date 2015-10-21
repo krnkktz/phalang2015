@@ -125,9 +125,9 @@ let syn t =
     h @@ s_cons xs and
 
   s_bool xs = match s_comp xs with
-    | e, Lex.Operator Lex.And :: xs1 -> let e1, xs2 = s_bool xs in
+    | e, Lex.Operator Lex.And :: xs1 -> let e1, xs2 = s_bool xs1 in
       Application (Application (Var "and", e), e1), xs2
-    | e, Lex.Operator Lex.Or :: xs1 -> let e1, xs2 = s_bool xs in
+    | e, Lex.Operator Lex.Or :: xs1 -> let e1, xs2 = s_bool xs1 in
       Application (Application (Var "or", e), e1), xs2
     | e, xs -> e, xs and
 

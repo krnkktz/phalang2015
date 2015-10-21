@@ -1,5 +1,6 @@
 Phalang 2015: the real experience.
 
-./a.out example.ph to run the example
 ./toplevel.sh to run the toplevel
+
+./a.out example.ph to run the example
 

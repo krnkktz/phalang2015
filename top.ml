@@ -12,7 +12,7 @@ let rec f () = (try (
   let () = print_string @@ Syn.show syn in
   let () = print_string "\n" in
   let () = print_string "eval: " in
-  let () = print_string @@ Show.show @@ Eval.eval Eval.builtin syn in
+  let () = print_string @@ Syn.show @@ Eval.eval Builtin.builtin syn in
   let () = print_string "\n" in ()
   ) with
   | Eval.Error x | Syn.Error x | Lex.Error x ->

@@ -10,7 +10,7 @@ let load_file f =
   (s) ;;
 
 if Array.length Sys.argv > 1 then
-  (print_string @@ Show.show @@ Eval.eval Eval.builtin @@ Syn.syn
+  (print_string @@ Syn.show @@ Eval.eval Builtin.builtin @@ Syn.syn
     @@ List.rev @@ Lex.l @@ load_file Sys.argv.(1) ;
   print_string "\n")
 else Top.f () ;;
