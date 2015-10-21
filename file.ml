@@ -9,20 +9,28 @@ let load_file f =
   close_in ic;
   (s) ;;
 
-if Array.length Sys.argv > 1 then
-  let lex = List.rev @@ Lex.l @@ load_file Sys.argv.(1) in
-  let () = print_string "lex: ok" in
-  let () = print_newline () in
+let l = Array.length Sys.argv in
+let fo = (l > 1 && Sys.argv.(1) = "-d") || (l > 2 && Sys.argv.(2) = "-d") in
+let fp =
+  if l > 1 && Sys.argv.(1) <>  "-d" then Sys.argv.(1)
+  else if l > 2 && Sys.argv.(2) <> "-d" then Sys.argv.(2)
+  else "" in
+if fp = "" then Top.f () else
+  let lex = List.rev @@ Lex.l @@ load_file fp in
+  if fo then (
+    print_string "lex: ok" ;
+    print_newline ()) ;
   let syn = Syn.syn lex in
-  let () = print_string "syn: ok" in
-  let () = print_newline () in
-  let () = print_string "stat: " in
+  if fo then (
+    print_string "syn: ok" ;
+    print_newline () ;
+    print_string "stat: ") ;
   let () = Iden.check syn in
-  let () = print_string "ok" in
-  let () = print_newline () in
-  let () = print_string "eval: " in
+  if fo then (
+    print_string "ok" ;
+    print_newline () ;
+    print_string "eval: ") ;
   (print_string @@ Syn.show @@ Eval.eval Builtin.builtin @@ Syn.syn
     @@ List.rev @@ Lex.l @@ load_file Sys.argv.(1) ;
-  print_string "\n")
-else Top.f () ;;
+  print_string "\n") ;;
 
