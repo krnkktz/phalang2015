@@ -15,10 +15,10 @@ let fact n = if n < 2 then 1 else n * fact (pred n) in
 
 let length x = if null x then 0 else succ (length (tail x)) in
 
-let nth n =
+let nth n li =
   let h n x =
-    if n == 0 then head x else h (succ n) (tail x) in
-  h n in
+    if n == 0 then head x else h (pred n) (tail x) in
+  h n li in
 
 let test_list =
   not true : min 1 2 : max 1 2 : succ 1

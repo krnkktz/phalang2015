@@ -18,11 +18,13 @@ let fp =
 if fp = "" then Top.f () else
   let lex = List.rev @@ Lex.l @@ load_file fp in
   if fo then (
-    print_string "lex: ok" ;
+    print_string "lex: " ;
+    print_string @@ Lex.show lex ;
     print_newline ()) ;
   let syn = Syn.syn lex in
   if fo then (
-    print_string "syn: ok" ;
+    print_string "syn: " ;
+    print_string @@ Syn.show syn ;
     print_newline () ;
     print_string "stat: ") ;
   let () = Iden.check syn in
