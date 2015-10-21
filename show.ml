@@ -8,5 +8,5 @@ let show = function
   | Bool true -> "bool true"
   | Bool false -> "bool false"
   | Fun _ -> "fun"
-  | _ -> raise @@ Error "WOooowoowoowowooOOoOOow"
+  | x -> "shit! " ^ Syn.show x
 

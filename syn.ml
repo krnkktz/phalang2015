@@ -9,7 +9,8 @@ type t =
   | Let of string * t * t
   | Int of int
   | Bool of bool
-  | Fun of (t -> t)
+  | Fun of string * t
+  | Builtin of (t -> t)
 
 let rec show = function
   | Application (t1, t2) -> "Application (" ^ show t1 ^ ", " ^ show t2 ^ ")"
@@ -20,6 +21,7 @@ let rec show = function
   | Bool true -> "Bool true"
   | Bool false -> "Bool false"
   | Fun _ -> "Fun"
+  | Builtin _ -> "Builtin"
 
 let syn t =
 
@@ -37,6 +39,10 @@ let syn t =
           Let (name, exp, exp1), xs3
         | _ -> raise @@ Error "expected in")
     | Lex.Let :: _ -> raise @@ Error "weird let"
+    | Lex.Fun :: Lex.Id name :: Lex.To :: xs ->
+      let exp, xs1 = expr xs in
+        Fun (name, exp), xs1
+    | Lex.Fun :: _ -> raise @@ Error "weird fun"
     | Lex.Int x :: xs -> Int x, xs
     | Lex.Bool x :: xs -> Bool x, xs
     | Lex.Id x :: xs -> Var x, xs

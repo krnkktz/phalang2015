@@ -30,6 +30,28 @@ type t =
   | If
   | Then
   | Else
+  | Fun
+  | To
+
+let rec show = function
+  | [] -> ""
+  | x :: xs -> (match x with
+    | Id s -> s
+    | Int n -> string_of_int n
+    | Bool true -> "true"
+    | Bool false -> "false"
+    | Operator _ -> "@"
+    | Leftpar -> "("
+    | Rightpar -> ")"
+    | Let -> "let"
+    | Assign -> "="
+    | In -> "in"
+    | If -> "if"
+    | Then -> "then"
+    | Else -> "else"
+    | Fun -> "fun"
+    | To -> "to") ^ " " ^ show xs
+
 
 let l s =
 
@@ -99,6 +121,7 @@ let l s =
       | "if" -> tr (If :: acc)
       | "then" -> tr (Then :: acc)
       | "else" -> tr (Else :: acc)
+      | "fun" -> tr (Fun :: acc)
       | n -> tr (Id n :: acc)) pos and
 
   tr_num acc cn pos =
@@ -110,10 +133,11 @@ let l s =
 
   tr_comm acc nb is pos =
     if pos >= len then acc else
-    (if s.[pos] = '-' then
-      if is && nb > 0 then tr acc else tr_comm acc 1 true
-    else
-      if is then tr_comm acc 0 true else tr (Operator Minus :: acc))
+      (if s.[pos] = '>' && nb = 1 && not is then tr (To :: acc) else
+        if s.[pos] = '-' then
+          if is && nb > 0 then tr acc else tr_comm acc 1 true
+      else
+        if is then tr_comm acc 0 true else tr (Operator Minus :: acc))
     @@ succ pos in
 
   tr [] 0 ;;
