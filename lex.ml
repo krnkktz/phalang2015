@@ -13,7 +13,6 @@ type operator =
   | Times
   | Division
   | Modulo
-  | Not
   | And
   | Or
   | Cons
@@ -117,7 +116,6 @@ let l s =
     if pos < len && is_varname s.[pos] then
       tr_var acc (cw ^ String.make 1 s.[pos]) @@ succ pos
     else (match cw with
-      | "not" -> tr (Operator Not :: acc)
       | "and" -> tr (Operator And :: acc)
       | "or" -> tr (Operator Or :: acc)
       | "true" -> tr (Bool true :: acc)

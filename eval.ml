@@ -70,6 +70,8 @@ let builtin =
     "<=", c ( <= );
     "and", b ( && );
     "or", b ( || );
+    "null", Syn.Fun ("x", Syn.Builtin
+      (fun x -> Syn.Bool (x = Syn.List Syn.Nil)));
     "head", Syn.Fun ("x", Syn.Builtin
       (fun x -> match x with
         | Syn.List Syn.Nil -> raise @@ Error "empty list"

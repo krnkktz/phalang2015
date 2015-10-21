@@ -60,7 +60,6 @@ let syn t =
     | Lex.Int x :: xs -> Int x, xs
     | Lex.Bool x :: xs -> Bool x, xs
     | Lex.Id x :: xs -> Var x, xs
-    | Lex.Operator Lex.Not :: xs -> Var "not", xs
     | Lex.Leftpar :: xs -> let ex, xxs = expr xs in (match xxs with
       | Lex.Rightpar :: xxxs -> ex, xxxs
       | _ -> raise @@ Error "missing right parenthesis")
