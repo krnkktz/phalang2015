@@ -16,9 +16,7 @@ let rec eval names =
   | Syn.Application (exp1, exp2) -> (match eval names exp1 with
     | Syn.Fun (_, Syn.Builtin f) -> f @@ eval names exp2
     | Syn.Fun (n, f) -> let v = eval names exp2 in
-      (match eval ((n, v) :: names) f with
-        | Syn.Fun (n1, f1) -> Syn.Fun (n1, Syn.Let (n, v, f1))
-        | e -> e)
+      eval ((n, v) :: names) @@ closure n v f
     | _ -> raise @@ Error "can't apply that!")
   | Syn.Var s ->
         get_var s names
@@ -31,7 +29,20 @@ let rec eval names =
   | Syn.Bool b -> Syn.Bool b
   | Syn.Fun (n, e) -> Syn.Fun (n, e)
   | Syn.Builtin f -> Syn.Builtin f
-  | Syn.List x -> Syn.List x
+  | Syn.List x -> Syn.List x and
+
+  closure n v = function
+    | Syn.Application (e1, e2) ->
+        Syn.Application (closure n v e1, closure n v  e2)
+    | Syn.Var s when s = n -> v 
+    | Syn.Cond (c, i, e) ->
+      Syn.Cond (closure n v c, closure n v i, closure n v e)
+    | Syn.Let (n1, v1, c) when n1 = n -> Syn.Let (n1, closure n v v1, c)
+    | Syn.Let (n1, v1, c) -> Syn.Let (n1, closure n v v1, closure n v c)
+    | Syn.Fun (n1, e) when n1 = n -> Syn.Fun (n1, e)
+    | Syn.Fun (n1, e) -> Syn.Fun (n1, closure n v e)
+    | e -> e
+
 
 let builtin =
   let i_ = function | Syn.Int x -> x | _ -> raise @@ Error "not an int" in
