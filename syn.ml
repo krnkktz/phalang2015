@@ -68,7 +68,8 @@ let syn t =
         Application (Var (var_of_op o), exp), []
     | Lex.Operator o :: xs1 -> let exp1, xs2 = tr_super xs1 in
         Application (Application (Var (var_of_op o), exp), exp1), xs2
-    | xs2 -> let exp1, xs3 = tr xs2 in Application (exp, exp1), xs3 in
+    | xs2 -> try (let exp1, xs3 = tr xs2 in Application (exp, exp1), xs3) with
+      | Error "wat??" -> exp, xs2 in
 
   match tr_super t with
     | e, [] -> e

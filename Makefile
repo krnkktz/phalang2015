@@ -1,11 +1,11 @@
 # Makefile
 
 all:
-	@ocamlc lex.ml syn.ml eval.ml show.ml top.ml
+	ocamlc lex.ml syn.ml eval.ml show.ml top.ml
 
 clean:
-	@rm -fv *.cmi *.cmo a.out
+	@rm -fv *.cmi *.cmo
 
-type:
-	@ocamlc -i lex.ml syn.ml
+mrproper: clean
+	@rm -fv a.out
 

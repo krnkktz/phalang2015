@@ -9,7 +9,7 @@ let rec get_var s = function
 
 let rec eval names = function
   | Syn.Application (exp1, exp2) -> (match eval names exp1 with
-    | Syn.Fun f -> f exp2
+    | Syn.Fun f -> f @@ eval names exp2
     | _ -> raise @@ Error "can't apply that!")
   | Syn.Var s -> get_var s names
   | Syn.Cond (c, i, e) -> (match eval names c with
@@ -30,12 +30,12 @@ let builtin =
     Syn.Bool (f (b_ x) (b_ y)))) in
 
   [
-    "+", i (+);
-    "-", i (-);
-    "+", i (-);
-    "/", i (-);
-    "%", i (-);
-    "and", b (&&);
-    "or", b (||);
+    "+", i ( + );
+    "-", i ( - );
+    "*", i ( * );
+    "/", i ( / );
+    "%", i ( mod );
+    "and", b ( && );
+    "or", b ( || );
     "not", Syn.Fun (fun x -> Syn.Bool (not @@ b_ x))]
 
