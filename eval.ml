@@ -32,6 +32,9 @@ let builtin =
   let b f = Syn.Fun ("x", Syn.Builtin
     (fun x ->Syn.Fun ("y", Syn.Builtin
       (fun y -> Syn.Bool (f (b_ x) (b_ y)))))) in
+  let c f = Syn.Fun ("x", Syn.Builtin
+    (fun x -> Syn.Fun ("y", Syn.Builtin
+      (fun y -> Syn.Bool (f (i_ x) (i_ y)))))) in
 
   [
     "+", i ( + );
@@ -39,6 +42,11 @@ let builtin =
     "*", i ( * );
     "/", i ( / );
     "%", i ( mod );
+    "==", c ( == );
+    ">", c ( > );
+    "<", c ( < );
+    ">=", c ( >= );
+    "<=", c ( <= );
     "and", b ( && );
     "or", b ( || );
     "not", Syn.Fun ("x", Syn.Builtin (fun x -> Syn.Bool (not @@ b_ x)))]
