@@ -22,18 +22,14 @@ type t =
   | Int of int
   | Bool of bool
   | Operator of operator
-  | True
-  | False
   | Leftpar
   | Rightpar
-  | Leftacc
-  | Rightacc
-  | Semicolon
-  | Affect
+  | Let
+  | Assign
+  | In
   | If
   | Then
   | Else
-  | While
 
 let l s =
 
@@ -56,7 +52,6 @@ let l s =
   let rec tr acc pos = if pos >= len then acc else
     (match s.[pos] with
       | ' ' | '\t' | '\r' | '\n' -> tr acc
-      | '=' -> tr (Operator Equal :: acc)
       | '+' -> tr (Operator Plus :: acc)
       | '-' -> tr_comm acc 1 false
       | '*' -> tr (Operator Times :: acc)
@@ -64,16 +59,19 @@ let l s =
       | '%' -> tr (Operator Modulo :: acc)
       | '(' -> tr (Leftpar :: acc)
       | ')' -> tr (Rightpar :: acc)
-      | '{' -> tr (Leftacc :: acc)
-      | '}' -> tr (Rightacc :: acc)
-      | ';' -> tr (Semicolon :: acc)
-      | ':' -> tr (Affect :: acc)
+      | '=' -> tr_eq acc
       | '>' -> tr_gr acc
       | '<' -> tr_lr acc
       | n when is_num n -> tr_num acc @@ int_of_string @@ String.make 1 n
       | n when is_varname n -> tr_var acc @@ String.make 1 n
       | c -> raise @@ Error ("unknown char '" ^ String.make 1 c ^ "'"))
     @@ succ pos and
+
+  tr_eq acc pos =
+    if pos < len && s.[pos] = '=' then
+      tr (Operator Equal :: acc) (succ pos)
+    else
+      tr (Assign :: acc) pos and
 
   tr_gr acc pos =
     if pos < len && s.[pos] = '=' then
@@ -96,10 +94,11 @@ let l s =
       | "or" -> tr (Operator Or :: acc)
       | "true" -> tr (Bool true :: acc)
       | "false" -> tr (Bool false :: acc)
+      | "let" -> tr (Let :: acc)
+      | "in" -> tr (In :: acc)
       | "if" -> tr (If :: acc)
       | "then" -> tr (Then :: acc)
       | "else" -> tr (Else :: acc)
-      | "while" -> tr (While :: acc)
       | n -> tr (Id n :: acc)) pos and
 
   tr_num acc cn pos =
