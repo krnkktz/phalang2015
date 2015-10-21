@@ -1,0 +1,6 @@
+let nth n x =
+  let h n x =
+   if n < 1 then head x else h (n - 1) (tail x) in
+  h n x in
+
+nth 5 (1 : 2 : 3 : 4 : 5 : 6 : 7 : nil)

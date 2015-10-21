@@ -34,7 +34,7 @@ let rec eval names =
   closure n v = function
     | Syn.Application (e1, e2) ->
         Syn.Application (closure n v e1, closure n v  e2)
-    | Syn.Var s when s = n -> v 
+    | Syn.Var s when s = n -> v
     | Syn.Cond (c, i, e) ->
       Syn.Cond (closure n v c, closure n v i, closure n v e)
     | Syn.Let (n1, v1, c) when n1 = n -> Syn.Let (n1, closure n v v1, c)
