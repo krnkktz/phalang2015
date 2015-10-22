@@ -6,5 +6,7 @@ all:
 
 clean:
 	@rm -rfv _build
+
+mrproper: clean
 	@rm -vf a.out
 
