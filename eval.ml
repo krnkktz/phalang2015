@@ -18,13 +18,15 @@ let rec eval names =
     | Syn.Fun (n, f) -> let v = eval names exp2 in
       eval ((n, v) :: names) @@ closure n v f
     | _ -> raise @@ Error "can't apply that!")
-  | Syn.Var s ->
-        get_var s names
+  | Syn.Var s -> get_var s names
   | Syn.Cond (c, i, e) -> (match eval names c with
     | Syn.Bool true -> eval names i
     | Syn.Bool false -> eval names e
     | _ -> raise @@ Error "condition is not boolean")
-  | Syn.Let (n, v, c) -> eval ((n, eval names v) :: names) c
+  | Syn.Let (n, v, c) ->
+      eval names (closure n v c)
+(*      eval names (closure n (closure n v v) c) *)
+(*      eval ((n, closure n v (eval names v)) :: names) c*)
   | Syn.Int n -> Syn.Int n
   | Syn.Bool b -> Syn.Bool b
   | Syn.Fun (n, e) -> Syn.Fun (n, e)
