@@ -24,7 +24,7 @@ let rec eval names =
     | Syn.Bool false -> eval names e
     | _ -> raise @@ Error "condition is not boolean")
   | Syn.Let (n, v, c) ->
-      eval names (closure n v c)
+      eval ((n, v) :: names) @@ closure n v c
 (*      eval names (closure n (closure n v v) c) *)
 (*      eval ((n, closure n v (eval names v)) :: names) c*)
   | Syn.Int n -> Syn.Int n

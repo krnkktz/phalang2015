@@ -1,11 +1,10 @@
 # Makefile
 
 all:
-	ocamlopt lex.ml syn.ml builtin.ml iden.ml eval.ml top.ml file.ml
+	@ocamlbuild phalang.native
+	@mv -v phalang.native a.out
 
 clean:
-	@rm -fv *.cmi *.cmo *.cmx *.o
-
-mrproper: clean
-	@rm -fv a.out
+	@rm -rfv _build
+	@rm -vf a.out
 
