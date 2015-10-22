@@ -6,7 +6,6 @@ type t =
   | Application of t * t
   | Var of string
   | Cond of t * t * t
-  | Let of string * t * t
   | Int of int
   | Bool of bool
   | Fun of string * t
@@ -21,7 +20,6 @@ let rec show = function
   | Application (t1, t2) -> "application (" ^ show t1 ^ ", " ^ show t2 ^ ")"
   | Var s -> "var " ^ s
   | Cond (c, i, e) -> "cond (" ^ show c ^ ", " ^ show i ^ ", " ^ show e ^ ")"
-  | Let (n, v, c) -> "let (" ^ n ^ ", " ^ show v ^ ", " ^ show c ^ ")"
   | Int n -> "int " ^ string_of_int n
   | Bool true -> "bool true"
   | Bool false -> "bool false"
@@ -70,7 +68,7 @@ let syn t =
       | args, Lex.Assign :: xs ->
         let exp, xs1 = expr xs in (match xs1 with
           | Lex.In :: xs2 -> let exp1, xs3 = expr xs2 in
-            Let (name, gen_f r (List.rev args) exp, exp1), xs3
+            (Application (Fun (name, exp1), gen_f r (List.rev args) exp), xs3)
           | _ -> raise @@ Error "weird let, expected in")
       | _ -> raise @@ Error "weird let, expected =" and
 

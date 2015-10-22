@@ -32,7 +32,7 @@ if fp = "" then Top.f () else
     print_string "ok" ;
     print_newline () ;
     print_string "eval: ") ;
-  (print_string @@ Syn.show @@ Eval.eval Builtin.builtin @@ Syn.syn
+  (print_string @@ Syn.show @@ Eval.eval @@ Syn.syn
     @@ List.rev @@ Lex.l @@ load_file Sys.argv.(1) ;
   print_string "\n") ;;
 

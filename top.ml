@@ -20,7 +20,7 @@ let rec f () = (try (
     print_string "ok." ;
     print_newline () ;
     print_string "eval: ") ;
-  let () = print_string @@ Syn.show @@ Eval.eval Builtin.builtin syn in
+  let () = print_string @@ Syn.show @@ Eval.eval syn in
   let () = print_string "\n" in ()
   ) with
   | Eval.Error x | Syn.Error x | Lex.Error x | Iden.Error x ->
