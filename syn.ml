@@ -68,7 +68,14 @@ let syn t =
       | args, Lex.Assign :: xs ->
         let exp, xs1 = expr xs in (match xs1 with
           | Lex.In :: xs2 -> let exp1, xs3 = expr xs2 in
-            (Application (Fun (name, exp1), gen_f r (List.rev args) exp), xs3)
+            if r then
+              Application (Fun ("rec",
+                Application (Fun (name, exp1),
+                  Application (Var "__y_combinator__", Var "rec"))),
+                Fun (name, gen_f r (List.rev args) exp)), xs3
+            else
+              (Application (Fun (name, exp1),
+                gen_f r (List.rev args) exp), xs3)
           | _ -> raise @@ Error "weird let, expected in")
       | _ -> raise @@ Error "weird let, expected =" and
 

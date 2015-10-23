@@ -1,4 +1,4 @@
 #!/bin/sh
 
-rlwrap ./a.out
+rlwrap ./a.out $1
 

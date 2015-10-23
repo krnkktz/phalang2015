@@ -1,5 +1,5 @@
 let nth n x =
-  let h n x =
+  let rec h n x =
    if n < 1 then head x else h (n - 1) (tail x) in
   h n x in
 

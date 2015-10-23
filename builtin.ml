@@ -1,19 +1,21 @@
 (* builtin.ml *)
 
+open Syn
+
 exception Error of string
 
 let builtin =
-  let i_ = function | Syn.Int x -> x | _ -> raise @@ Error "not an int" in
-  let i f = Syn.Fun ("x", Syn.Builtin
-    (fun x -> Syn.Fun ("y", Syn.Builtin
-      (fun y -> Syn.Int (f (i_ x) (i_ y)))))) in
-  let b_ = function | Syn.Bool x -> x | _ -> raise @@ Error "not a bool" in
-  let b f = Syn.Fun ("x", Syn.Builtin
-    (fun x ->Syn.Fun ("y", Syn.Builtin
-      (fun y -> Syn.Bool (f (b_ x) (b_ y)))))) in
-  let c f = Syn.Fun ("x", Syn.Builtin
-    (fun x -> Syn.Fun ("y", Syn.Builtin
-      (fun y -> Syn.Bool (f (i_ x) (i_ y)))))) in
+  let i_ = function | Int x -> x | _ -> raise @@ Error "not an int" in
+  let i f = Fun ("x", Builtin
+    (fun x -> Fun ("y", Builtin
+      (fun y -> Int (f (i_ x) (i_ y)))))) in
+  let b_ = function | Bool x -> x | _ -> raise @@ Error "not a bool" in
+  let b f = Fun ("x", Builtin
+    (fun x ->Fun ("y", Builtin
+      (fun y -> Bool (f (b_ x) (b_ y)))))) in
+  let c f = Fun ("x", Builtin
+    (fun x -> Fun ("y", Builtin
+      (fun y -> Bool (f (i_ x) (i_ y)))))) in
 
   [
     "+", i ( + );
@@ -28,23 +30,29 @@ let builtin =
     "<=", c ( <= );
     "and", b ( && );
     "or", b ( || );
-    "null", Syn.Fun ("x", Syn.Builtin
-      (fun x -> Syn.Bool (x = Syn.List Syn.Nil)));
-    "head", Syn.Fun ("x", Syn.Builtin
+    "null", Fun ("x", Builtin
+      (fun x -> Bool (x = List Nil)));
+    "head", Fun ("x", Builtin
       (fun x -> match x with
-        | Syn.List Syn.Nil -> raise @@ Error "empty list"
-        | Syn.List Syn.Li (x, _) -> x
+        | List Nil -> raise @@ Error "empty list"
+        | List Li (x, _) -> x
         | _ -> raise @@ Error "not a list"));
-    "tail", Syn.Fun ("x", Syn.Builtin
+    "tail", Fun ("x", Builtin
       (fun x -> match x with
-        | Syn.List Syn.Nil -> raise @@ Error "empty list"
-        | Syn.List Syn.Li (_, xs) -> Syn.List xs
+        | List Nil -> raise @@ Error "empty list"
+        | List Li (_, xs) -> List xs
         | _ -> raise @@ Error "not a list"));
-    "nil", Syn.List Syn.Nil;
-    ":", Syn.Fun ("x", Syn.Builtin
-      (fun x -> Syn.Fun ("y", Syn.Builtin
+    "nil", List Nil;
+    ":", Fun ("x", Builtin
+      (fun x -> Fun ("y", Builtin
         (fun y -> match y with
-          | Syn.List z -> Syn.List (Syn.Li (x, z))
+          | List z -> List (Li (x, z))
           | _ -> raise @@ Error "not a list"))));
-    "not", Syn.Fun ("x", Syn.Builtin (fun x -> Syn.Bool (not @@ b_ x)))]
+    "not", Fun ("x", Builtin (fun x -> Bool (not @@ b_ x)));
+    "__y_combinator__", Fun ("g", 
+      Application (Fun ("x",
+        Application (Var "g", Application (Var "x", Var "x"))),
+        Fun ("x", Application (Var "g", Application (Var "x", Var "x")))));
+
+  ]
 
