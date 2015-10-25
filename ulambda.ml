@@ -25,7 +25,7 @@ let rec compile = function
   | Syn.List n -> raise @@ Error "lists are not implemented"
 
 let rec show = function
-  | App (e1, e2) -> show e1 ^ " " ^ show e2
+  | App (e1, e2) -> "(" ^ show e1 ^ " " ^ show e2 ^ ")"
   | Var s -> s
   | Fun (s, e) -> "(λ" ^ s ^ "." ^ show e ^ ")"
 

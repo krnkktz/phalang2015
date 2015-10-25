@@ -1,7 +1,2 @@
-a.out
-*.cmi
-*.cmo
-*.cmx
 _build
-*.o
 *.native

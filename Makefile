@@ -1,15 +1,15 @@
 # Makefile
 
-all:
-	@ocamlbuild run.native
-	@mv -v run.native a.out
+all: run
 
-ulambda:
+run:
+	@ocamlbuild run.native
+ulrun:
 	@ocamlbuild ulrun.native
 
 clean:
 	@rm -rfv _build
 
 mrproper: clean
-	@rm -vf a.out
+	@rm -vf *.native
 
