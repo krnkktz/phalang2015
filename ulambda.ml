@@ -29,6 +29,18 @@ let rec compile = function
   | Syn.Var "+" -> (* let + m n f x = m f (n f x) *)
       Fun ("m", Fun ("n", Fun ("f", Fun ("x",
         App (App (Var "m", Var "f"), App (App (Var "n", Var "f"), Var "x"))))))
+      (* let pred n f x = n (fun g h -> h (g f)) (fun u -> x) (fun u -> u) *)
+  | Syn.Var "-" -> (* let - m n = (n pred) m *)
+      Fun ("m", Fun ("n", (
+        App (App (Var "n",
+
+          Fun ("n", Fun ("f", Fun ("x", (
+            App (App (App (Var "n", Fun ("g", Fun ("h", 
+              App (Var "h", App (Var "g", Var "f"))
+            ))), Fun ("u", Var "x")), Fun ("u", Var "u"))
+          ))))
+
+        ), Var "m"))))
   | Syn.Var s -> Var s
   | Syn.Builtin _ -> raise @@ Error "this builtin is not implemented"
   | Syn.Int n -> Fun ("f", Fun ("x", compile_int n))
