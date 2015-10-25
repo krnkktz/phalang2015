@@ -11,6 +11,11 @@ let rec compile_int = function
   | 0 -> Var "x"
   | n -> App (Var "f", compile_int @@ pred n)
 
+let rec show_int f = function
+  | Var "x" -> 1
+  | App (Var f1, e) when f1 = f -> succ (show_int f e)
+  | _ -> raise @@ Error "not a number"
+
 let rec compile = function
   | Syn.Application (e1, e2) -> App (compile e1, compile e2)
   | Syn.Cond (p, t, f) -> App (App (compile p, compile t), compile f)
@@ -19,12 +24,26 @@ let rec compile = function
   | Syn.Bool false -> Fun ("x", Fun ("y", Var "y"))
   | Syn.Var "and" ->
       Fun ("p", Fun ("q", App (App (Var "p", Var "q"), Var "p")))
+  | Syn.Var "or" ->
+      Fun ("p", Fun ("q", App (App (Var "p", Var "p"), Var "q")))
+  | Syn.Var "+" ->
+      Fun ("m", Fun ("n", Fun ("f", Fun ("x",
+        App (App (Var "m", Var "f"), App (App (Var "n", Var "f"), Var "x"))))))
   | Syn.Var s -> Var s
   | Syn.Builtin _ -> raise @@ Error "this builtin is not implemented"
   | Syn.Int n -> Fun ("f", Fun ("x", compile_int n))
   | Syn.List n -> raise @@ Error "lists are not implemented"
 
 let rec show = function
+  | Fun (x1, ((Fun (y, Var x2)) as e)) when x1 = x2 ->
+      "(λ" ^ x1 ^ "." ^ show e ^ ") (= true)"
+  | Fun (x, ((Fun (y1, Var y2)) as e)) when y1 = y2 ->
+      "(λ" ^ x ^ "." ^ show e ^ ") (= false or 0)"
+  | Fun (f, ((Fun (x, App (Var f2, e2))) as e)) when f = f2 ->
+      (try "(λ" ^ f ^ "." ^ show e ^ ") (= "
+        ^ (string_of_int @@ show_int f e2) ^ ")" with
+        | Error "not a number" ->
+            "(λ" ^ f ^ "." ^ show e ^ ")")
   | App (e1, e2) -> "(" ^ show e1 ^ " " ^ show e2 ^ ")"
   | Var s -> s
   | Fun (s, e) -> "(λ" ^ s ^ "." ^ show e ^ ")"
@@ -37,7 +56,7 @@ let rec replace n e = function
 
 let rec reduce = function
   | App (e1, e2) -> (match reduce e1 with
-    | Fun (s, e3) -> replace s e2 e3
+    | Fun (s, e3) -> reduce @@ replace s e2 e3
     | e -> (print_string "wierd sutff\n"; print_newline () ; App (e, reduce e2)))
   | e -> e
 
