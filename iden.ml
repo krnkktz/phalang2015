@@ -16,5 +16,5 @@ let check t =
     | Syn.Var n -> checkvar n names
     | Syn.Int _ | Syn.Bool _ | Syn.Builtin _ | Syn.List _ -> () in
 
-  h (List.map (fun (x, y) -> x) Builtin.builtin) t
+  h (List.map (fun (x, _) -> x) Builtin.builtin) t
 

@@ -17,5 +17,30 @@ let rec length x = if null x then 0 else succ (length (tail x)) in
 
 let rec nth n x = if n == 0 then head x else nth (n - 1) (tail x) in
 
+  let rec split li a b =
+    if null li then a : b : nil else
+    let h = head li in let t = tail li in
+    split t b (h : a) in
+
+  let rec merge a b =
+    if null a then b else
+    if null b then a else
+    let ha = head a in
+    let ta = tail a in
+    let hb = head b in
+    let tb = tail b in
+
+    if ha > hb then hb : (merge a tb)
+    else ha : (merge ta b) in
+
+let rec mergesort li =
+  if null li then nil else
+  if null (tail li) then li else
+  let s = split li nil nil in
+  let li1 = head s in
+  let li2 = head (tail s) in
+  merge (mergesort li1) (mergesort li2) in
+
+
 lib
 

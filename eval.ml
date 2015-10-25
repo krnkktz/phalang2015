@@ -6,7 +6,7 @@ exception Error of string
 
 
 let rec get_var s = function
-  | [] -> raise @@ Error ("unknown builtin " ^ s)
+  | [] -> raise @@ Error ("unknown var " ^ s ^ " at evaluation!")
   | (x, v) :: _ when x = s -> v
   | _ :: xs -> get_var s xs
 
@@ -23,7 +23,7 @@ let rec eval = function
   | Application (f, x) -> (match eval f with
     | Fun (_, Builtin f) -> f @@ eval x
     | Fun (s, e) -> eval @@ closure s (eval x) e
-    | t -> raise @@ Error ("not a function but a " ^ Syn.show t))
+    | s -> raise @@ Error ("not a function but a " ^ Syn.show false s))
   | Cond (p, t, f) -> (match eval p with
     | Bool true -> eval t
     | Bool false -> eval f

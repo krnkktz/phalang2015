@@ -30,6 +30,7 @@ let builtin =
     "<=", c ( <= );
     "and", b ( && );
     "or", b ( || );
+    "not", Fun ("x", Builtin (fun x -> Bool (not @@ b_ x)));
     "nil", List Nil;
 
     "null", Fun ("x", Builtin
@@ -54,7 +55,9 @@ let builtin =
           | List z -> List (Li (x, z))
           | _ -> raise @@ Error "not a list"))));
 
-    "not", Fun ("x", Builtin (fun x -> Bool (not @@ b_ x)));
+    "show_val", Fun ("x", Builtin (fun x -> (
+      print_string @@ Syn.show false x ; print_newline () ; List Nil)));
+
 
     (* fun f g  -> (fun x a -> f (x x) a) (fun x a -> f (x x) a) g *)
     let sub = (Fun ("_x_", Fun ("_a_",

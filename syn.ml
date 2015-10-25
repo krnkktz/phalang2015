@@ -16,17 +16,24 @@ and li =
   | Nil
   | Li of t * li
 
-let rec show = function
-  | Application (t1, t2) -> "application (" ^ show t1 ^ ", " ^ show t2 ^ ")"
+let rec show t = function
+  | Application (t1, t2) ->
+      "application (" ^ show t t1 ^ ", " ^ show t t2 ^ ")"
   | Var s -> "var " ^ s
-  | Cond (c, i, e) -> "cond (" ^ show c ^ ", " ^ show i ^ ", " ^ show e ^ ")"
+  | Cond (c, i, e) ->
+      "cond (" ^ show t c ^ ", " ^ show t i ^ ", " ^ show t e ^ ")"
   | Int n -> "int " ^ string_of_int n
   | Bool true -> "bool true"
   | Bool false -> "bool false"
-  | Fun (n, x) -> "fun " ^ n ^ " -> " ^ show x
+  | Fun (n, x) -> "fun" ^ (if t then " " ^ n ^ " -> " ^ show t x else "")
   | Builtin _ -> "builtin"
   | List Nil -> "nil"
-  | List Li (x, xs) -> show x ^ " : " ^ show @@ List xs
+  | List Li (x, xs) -> "(" ^ show t x ^ " : " ^ show_l t @@ List xs
+
+and show_l t = function
+  | List Nil -> "nil)"
+  | List Li (x, xs) -> show t x ^ " : " ^ show_l t @@ List xs
+  | o -> show t o
 
 let syn l t =
 
