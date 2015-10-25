@@ -5,7 +5,8 @@ find a better solution than the (probably shitty) lib keyword
 
 find a better solution for comments
 
-keep writing the ulambda
+keep writing the ulambda ; pimping the output (only display number for the
+entire expression)
 
 write tlambda
 

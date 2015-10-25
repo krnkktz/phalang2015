@@ -26,7 +26,7 @@ let rec compile = function
       Fun ("p", Fun ("q", App (App (Var "p", Var "q"), Var "p")))
   | Syn.Var "or" ->
       Fun ("p", Fun ("q", App (App (Var "p", Var "p"), Var "q")))
-  | Syn.Var "+" ->
+  | Syn.Var "+" -> (* let + m n f x = m f (n f x) *)
       Fun ("m", Fun ("n", Fun ("f", Fun ("x",
         App (App (Var "m", Var "f"), App (App (Var "n", Var "f"), Var "x"))))))
   | Syn.Var s -> Var s
@@ -56,8 +56,9 @@ let rec replace n e = function
 
 let rec reduce = function
   | App (e1, e2) -> (match reduce e1 with
-    | Fun (s, e3) -> reduce @@ replace s e2 e3
-    | e -> (print_string "wierd sutff\n"; print_newline () ; App (e, reduce e2)))
+    | Fun (s, e3) -> reduce @@ replace s (reduce e2) e3
+    | e -> App (e, reduce e2))
+  | Fun (s, e1) -> Fun (s, reduce e1)
   | e -> e
 
 
