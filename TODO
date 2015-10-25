@@ -1,0 +1,13 @@
+write as many operators as possible in phalang, after having implemented infix,
+non builtin operators
+
+find a better solution than the (probably shitty) lib keyword
+
+find a better solution for comments
+
+keep writing the ulambda
+
+write tlambda
+
+compile to something fun (bytecode? asm?)
+

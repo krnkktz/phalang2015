@@ -1,5 +1,32 @@
 phalang15: the real experience.
 
-./toplevel.sh to run the toplevel.
+./top.sh [-d]: run the toplevel interpreter
+./run.native [-d] file.pg: interpret a file
 
-./a.out -d file.pg to run file.pg.
+incomplete and not working:
+./ultop.sh [-d]: run the toplevel phalang to untyped lambda calculus compiler
+./ulrun.native [-d] file.pg: compile a file to untyped lambda calculus
+
+read pg/lib.pg to see how the language looks like.
+
+
+list of builtin functions:
+
++, -, *, /, %: usual functions on integers with usual priority and
+associativity
+
+==, >, <, >=, <=: usual comparisons between integers with usual priority and
+associativity
+
+and, or, not: usual boolean operators with usual priority and associativity
+
+null: check if a list is empty
+
+head: get the first element of a list
+
+tail: get a list without its first element
+
+: : list constructor
+
+show_val : print the value of an expression to stdout
+
