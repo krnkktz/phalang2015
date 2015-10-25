@@ -4,3 +4,4 @@ a.out
 *.cmx
 _build
 *.o
+*.native

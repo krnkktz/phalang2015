@@ -28,7 +28,7 @@ let rec show = function
   | List Nil -> "nil"
   | List Li (x, xs) -> show x ^ " : " ^ show @@ List xs
 
-let syn t =
+let syn l t =
 
   let rec gen_f r args exp = match args with
     | [] -> exp
@@ -57,6 +57,7 @@ let syn t =
     | Lex.Fun :: _ -> raise @@ Error "weird fun"
     | Lex.Int x :: xs -> Int x, xs
     | Lex.Bool x :: xs -> Bool x, xs
+    | Lex.Id "lib" :: xs -> l, xs
     | Lex.Id x :: xs -> Var x, xs
     | Lex.Leftpar :: xs -> let ex, xxs = expr xs in (match xxs with
       | Lex.Rightpar :: xxxs -> ex, xxxs

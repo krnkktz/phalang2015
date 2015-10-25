@@ -49,10 +49,14 @@ let builtin =
           | List z -> List (Li (x, z))
           | _ -> raise @@ Error "not a list"))));
     "not", Fun ("x", Builtin (fun x -> Bool (not @@ b_ x)));
-    "__y_combinator__", Fun ("g", 
-      Application (Fun ("x",
-        Application (Var "g", Application (Var "x", Var "x"))),
-        Fun ("x", Application (Var "g", Application (Var "x", Var "x")))));
+    (* fun f ->
+      * (fun x -> f (x x))
+      * (fun x -> f (x x))
+      *)
+    "__y_combinator__", Fun ("_g_",
+      Application (
+        Fun ("_x_", Application (Var "_g_", Application (Var "_x_", Var "_x_"))),
+        Fun ("_x_", Application (Var "_g_", Application (Var "_x_", Var "_x_")))));
 
   ]
 

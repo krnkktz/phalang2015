@@ -1,8 +1,8 @@
 # Makefile
 
 all:
-	@ocamlbuild phalang.native
-	@mv -v phalang.native a.out
+	@ocamlbuild run.native
+	@mv -v run.native a.out
 
 clean:
 	@rm -rfv _build
