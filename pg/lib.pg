@@ -9,13 +9,13 @@ let max a b = if a > b then a else b in
 let succ a = a + 1 in
 let pred a = a - 1 in
 let abs a = if a > 0 then a else 0 - a in
--- let rec fact n = if n < 2 then 1 else n * fact (pred n) in --
+let rec fact n = if n < 2 then 1 else n * fact (pred n) in
 
 -- lists --
 
--- let rec length x = if null x then 0 else succ (length (tail x)) in --
+let rec length x = if null x then 0 else succ (length (tail x)) in
 
--- let rec nth n x = if n == 0 then head x else nth (n - 1) (tail x) in --
+let rec nth n x = if n == 0 then head x else nth (n - 1) (tail x) in
 
 lib
 
