@@ -38,7 +38,7 @@ let rec replace n e = function
 let rec reduce = function
   | App (e1, e2) -> (match reduce e1 with
     | Fun (s, e3) -> replace s e2 e3
-    | e -> App (e, reduce e2))
+    | e -> (print_string "wierd sutff\n"; print_newline () ; App (e, reduce e2)))
   | e -> e
 
 

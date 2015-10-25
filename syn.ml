@@ -16,6 +16,21 @@ and li =
   | Nil
   | Li of t * li
 
+let optovar = function
+  | Lex.Greater -> ">"
+  | Lex.Lesser -> "<"
+  | Lex.Equal -> "=="
+  | Lex.Greaterorequal -> ">="
+  | Lex.Lesserorequal -> "<="
+  | Lex.Plus -> "+"
+  | Lex.Minus -> "-"
+  | Lex.Times -> "*"
+  | Lex.Division -> "/"
+  | Lex.Modulo -> "%"
+  | Lex.And -> "and"
+  | Lex.Or -> "or"
+  | Lex.Cons -> ":"
+
 let rec show t = function
   | Application (t1, t2) ->
       "application (" ^ show t t1 ^ ", " ^ show t t2 ^ ")"
@@ -66,6 +81,8 @@ let syn l t =
     | Lex.Bool x :: xs -> Bool x, xs
     | Lex.Id "lib" :: xs -> l, xs
     | Lex.Id x :: xs -> Var x, xs
+    | Lex.Leftpar :: Lex.Operator o :: Lex.Rightpar :: xs ->
+        Var (optovar o), xs
     | Lex.Leftpar :: xs -> let ex, xxs = expr xs in (match xxs with
       | Lex.Rightpar :: xxxs -> ex, xxxs
       | _ -> raise @@ Error "missing right parenthesis")

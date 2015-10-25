@@ -1,6 +1,6 @@
 # Makefile
 
-all: run
+all: run ulrun
 
 run:
 	@ocamlbuild run.native
