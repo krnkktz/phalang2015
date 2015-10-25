@@ -1,6 +1,5 @@
 phalang15: the real experience.
 
-./toplevel.sh to run the toplevel
+./toplevel.sh to run the toplevel.
 
-./a.out pg/example.ph to run the example
-
+./a.out -d file.pg to run file.pg.
