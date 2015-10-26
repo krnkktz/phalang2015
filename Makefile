@@ -13,6 +13,7 @@ web:
 		-syntax camlp4o -linkpkg -g -o web.byte \
 		lex.ml syn.ml builtin.ml iden.ml eval.ml ulambda.ml inter.ml web.ml
 	js_of_ocaml web.byte
+	@chmod -v a+r web.js
 	@mkdir -pv webdir/
 	@mv -v web.js webdir/
 	@cp -rv pg/ webdir/
