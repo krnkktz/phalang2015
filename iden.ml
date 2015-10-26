@@ -7,6 +7,7 @@ let check t =
   let rec checkvar n = function
     | [] -> raise @@ Error ("unknown variable " ^ n)
     | x :: _ when x = n -> ()
+    | _ when n = "pred" -> ()
     | _ :: xs -> checkvar n xs in
 
   let rec h names = function
