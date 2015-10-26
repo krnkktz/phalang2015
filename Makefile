@@ -16,6 +16,11 @@ web:
 	@mkdir -pv webdir/
 	@mv -v web.js webdir/
 	@cp -rv pg/ webdir/
+	@cp -v README README.temp
+	sed -i 's/$$/<br>/' README.temp
+	@cp -v webdir/index.html.template webdir/index.html
+	sed -e '/README/ {' -e 'r README.temp' -e 'd' -e '}' -i webdir/index.html
+	@rm -v README.temp
 
 clean:
 	@rm -rfv _build
@@ -23,4 +28,5 @@ clean:
 
 mrproper: clean
 	@rm -vf *.native
+	@rm -vf webdir/index.html webdir/web.js
 

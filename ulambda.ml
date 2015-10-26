@@ -37,12 +37,8 @@ let rec compile = function
           Fun ("u", Var "x")),
           Fun ("u", Var "u")))))
   | Syn.Var "-" ->
-      let pred = Fun ("n", Fun ("f", Fun ("x",
-        App (App (App (Var "n",
-          Fun ("g", Fun ("h", App (Var "h", App (Var "g", Var "f"))))),
-          Fun ("u", Var "x")),
-          Fun ("u", Var "u"))))) in
-      Fun ("m", Fun ("n", App (App (Var "n", compile (Var "pred")), Var "m")))
+      Fun ("m", Fun ("n", App (App (Var "n", compile (Syn.Var "pred")),
+      Var "m")))
   | Syn.Var s -> Var s
   | Syn.Builtin _ -> raise @@ Error "this builtin is not implemented"
   | Syn.Int n -> Fun ("f", Fun ("x", compile_int n))

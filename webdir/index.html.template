@@ -1,0 +1,45 @@
+<html>
+    <head>
+        <script src="web.js"></script>
+        <script src="js.js"></script>
+        <style type="text/css">
+            body {
+                padding: 25px;
+                background-color: black;
+                color: white;
+                font-family: Mono;
+                font-size: 10px;
+            }
+
+            #term {
+                margin-bottom: 5px;
+            }
+
+            #bterm {
+                width: 400px;
+                max-width: 400px;
+                float: left;
+                height: 500px;
+            }
+
+            #readme {
+                margin-right: 25px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="bterm">
+            <div id="term">phalang15&gt; </div>
+            <form onsubmit="jrun();" action="javascript:void(0);">
+                <input type="text" id="readline" />
+            </form>
+        </div>
+        <div id="readme">
+            <label><input type="checkbox" onclick="focus();" id="lambda" />
+            untyped lambda calculus</label>
+            <br /><br />
+            README
+        </div>
+        <script>document.getElementById("readline").focus();</script>
+    </body>
+</html>

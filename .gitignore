@@ -3,4 +3,5 @@ _build
 *.cmi
 *.cmo
 *.byte
+webdir/index.html
 webdir/web.js
