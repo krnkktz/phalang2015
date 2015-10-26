@@ -1,4 +1,5 @@
 (* run.ml *)
 
-Inter.inter (Syn.show false) Eval.eval true ;;
+Inter.inter print_string print_newline (Syn.show false)
+  Eval.eval true false "" ;;
 

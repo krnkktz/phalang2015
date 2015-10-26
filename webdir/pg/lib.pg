@@ -1,0 +1,46 @@
+-- booleans --
+
+let not a = if a then false else true in
+
+-- integers --
+
+let min a b = if a < b then a else b in
+let max a b = if a > b then a else b in
+let succ a = a + 1 in
+let pred a = a - 1 in
+let abs a = if a > 0 then a else 0 - a in
+let rec fact n = if n < 2 then 1 else n * fact (pred n) in
+
+-- lists --
+
+let rec length x = if null x then 0 else succ (length (tail x)) in
+
+let rec nth n x = if n == 0 then head x else nth (n - 1) (tail x) in
+
+let rec mergesort li =
+  let rec split li a b =
+    if null li then a : b : nil else
+    let h = head li in let t = tail li in
+    split t b (h : a) in
+
+  let rec merge a b =
+    if null a then b else
+    if null b then a else
+    let ha = head a in
+    let ta = tail a in
+    let hb = head b in
+    let tb = tail b in
+
+    if ha > hb then hb : (merge a tb)
+    else ha : (merge ta b) in
+
+  if null li then nil else
+  if null (tail li) then li else
+  let s = split li nil nil in
+  let li1 = head s in
+  let li2 = head (tail s) in
+  merge (mergesort li1) (mergesort li2) in
+
+
+lib
+

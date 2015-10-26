@@ -1,2 +1,6 @@
 _build
 *.native
+*.cmi
+*.cmo
+*.byte
+webdir/web.js
